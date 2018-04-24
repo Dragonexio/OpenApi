@@ -1,0 +1,283 @@
+<html>
+        <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <title> DragonEx signature demo </title>
+                <style type="text/css">
+                    input.normal{width:242px}
+                </style>
+                <script src='./cryptojs-3.1.2/rollups/hmac-sha1.js'></script>
+                <script src='./cryptojs-3.1.2/components/enc-base64-min.js'></script>
+                <script>
+                    String.prototype.trim=function()
+                    {
+                        return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+
+                    }
+                    function UserMeta(key,value){
+                        this.key = key.trim();
+                        this.value = value.trim();
+                    }
+                    function addMetaRow()
+                    {
+                        var table=document.getElementById("userMetaRows");
+                        var tr= document.createElement("tr");
+                        table.appendChild(tr)   
+                        tr.innerHTML='<td><input type="text" name="meta[]" size="12"/>:<input type="text" name="value[]" size="11"/></td><td><input size="auto" type="button" value="+" onclick="addMetaRow()"/><input type="button" value="-" onclick="subMetaRow(this)"/></td>';
+                        
+                    } 
+                    function subMetaRow(button){
+                        var row=button.parentNode.parentNode;
+                        row.parentNode.removeChild(row);
+                    } 
+
+                    function generateUTCTime(){
+                        var dateTime= document.getElementById("date");
+                        dateTime.value=new Date().toUTCString();
+                    }
+
+                    function validate(){
+                        var accessId= document.getElementById("accessId");
+                        if(accessId.value=="")
+                        {
+                           alert("AccessKeyId is required");
+                           accessId.focus();
+                           return false;
+                        }
+
+                        var accessKey= document.getElementById("accessKey");
+                        if(accessKey.value=="")
+                        {
+                           alert("AccessKeySecrete is required");
+                           accessKey.focus();
+                           return false;
+                        }
+
+                        var Sha1 = document.getElementById("contentSha1");
+                        var contentType = document.getElementById("contentType");
+                        var dateTime= document.getElementById("date");
+                        
+                        if(dateTime.value=="")
+                        {
+                           alert("Date is required");
+                           dateTime.focus();
+                           return false;
+                        }
+                        var keys = document.getElementsByName("meta[]"); 
+                        for(var i=0; i<keys.length; i++)
+                        {
+                            if(keys[i].value!="")
+                            {
+                               if(keys[i].value.toLowerCase().indexOf("dragonex-")==-1){
+                                    alert("User meta value must start with 'dragonex-'");
+                                    keys[i].focus();
+                                    return false;
+                                } 
+                            }   
+                        } 
+                        var values = document.getElementsByName("value[]"); 
+                         
+                        var resource = document.getElementById("resource");
+                        if(resource.value==""){
+                            alert("Resource is required");
+                            resource.focus(); 
+                            return false; 
+                        }
+                        var b = (resource.value.charAt(0)=='/');
+                        if(!b){
+                            alert("Resource must start with '/'");
+                            resource.focus(); 
+                            return false; 
+                        }
+
+                        return true;
+                    } 
+                    function headSign()
+                    {
+                        if(!validate()) return ;
+                        var metas = new Array();
+                        var headerString = "";
+                        var showHeaderString = "";
+                        var showSignString = "";
+                        var keys = document.getElementsByName("meta[]"); 
+                        var values = document.getElementsByName("value[]"); 
+                        metas.splice(0,metas.length);
+                       if(keys.length)
+                        {
+                            for(var i = 0; i<keys.length;i++){
+                               if(keys[i].value){
+                                    var k=keys[i].value.toLowerCase();
+                                    var v = values[i].value;
+
+                                    var m = new UserMeta(k,v); 
+                                    if(metas.length==0){
+                                        metas.push(m);
+                                        continue;
+                                    }
+                                    for(var j=0; j<metas.length;j++)
+                                    {
+                                        if(k < metas[j].key)
+                                        {
+                                            metas.splice(j,0,m);
+                                            break;
+                                        }
+                                        else if(k == metas[j].key)
+                                        {
+                                           metas[j].value=metas[j].value.concat(",",v);
+                                           break; 
+                                        }
+                                        if(j+1==metas.length){
+                                            metas.push(m);
+                                            break;
+                                        }
+                                    } 
+                               } 
+                            }
+                            if(metas.length>0){
+                                metas.sort();
+                                for(var i=0; i<metas.length; i++){
+                                     headerString =  headerString.concat(metas[i].key,":",metas[i].value,"\n");
+                                     showHeaderString = showHeaderString.concat(metas[i].key,":",metas[i].value,"<br>");
+                                }
+                            }
+                            var toSignString = "";
+                            toSignString = toSignString.concat(document.getElementById("verb").value,"\n"); 
+                            showSignString = document.getElementById("verb").value+"<br/>"; 
+                            var Sha1 = document.getElementById("contentSha1");
+                            toSignString=toSignString+Sha1.value.concat("\n");
+                            showSignString=showSignString+Sha1.value+"<br>";
+                               
+                            var contentType = document.getElementById("contentType");
+                            toSignString=toSignString+contentType.value.concat("\n");
+                            showSignString=showSignString+contentType.value+"<br>";
+                            
+                            var dateTime= document.getElementById("date");
+                            toSignString=toSignString+dateTime.value.concat("\n");
+                            showSignString=showSignString+dateTime.value+"<br>";
+                            
+                            toSignString=toSignString+headerString;
+                            showSignString=showSignString+showHeaderString;
+                            
+                            var resource = document.getElementById("resource"); 
+                            toSignString=toSignString+resource.value;
+                            showSignString=showSignString+resource.value;
+                            document.getElementById("signString").innerHTML=showSignString;
+                            
+                            var accessKey = document.getElementById("accessKey").value; 
+                            var hash = CryptoJS.HmacSHA1(toSignString,accessKey);
+                            var sign = hash.toString(CryptoJS.enc.Base64); 
+                            document.getElementById("signature").innerHTML=sign;
+                        }else{
+                            alert("no");
+                        }
+
+                    }
+            </script>
+        </head>
+        <body >
+                <table>
+                        <tr>
+                                <td colspan="4">
+                                <table><tr>
+                                <td colspan="1" >AccessKeyId:<input id="accessId" type="text" name="accessId"/></td>
+                                <td colspan="3" >AccessKeySecrete:<input id="accessKey" type="text" name="accessKey"/></td>
+                                </tr></table>
+                            </td>
+                        </tr>
+                        <tr>
+                                <th colspan="4"><h2>Head Signature</h2></th>
+                        </tr>
+                        <tr>
+                                <td colspan="4">
+                                    <pre text-align="left">
+ Signature = base64(hmac-sha1(VERB + "\n" 
+                + CONTENT-Sha1 + "\n" 
+                + CONTENT-TYPE + "\n" 
+                + DATE + "\n" 
+                + CanonicalizedDragonExHeaders
+                + CanonicalizedResource))
+                                    </pre>
+                                </td>
+                          </tr>
+                          <tr> 
+                                  <td colspan="4">
+                                        <table>
+                                                <tr>
+                                                        <td>VERB:</td>
+                                                        <td colspan="2">
+                                                                <select id="verb" width="200" >
+                                                                        <option size="200" width="200">GET</option>
+                                                                        <option>PUT</option>
+                                                                        <option>DELETE</option>
+                                                                        <option>POST</option>
+                                                                        <option>OPTIONS</option>
+                                                                        <option>HEAD</option>          
+                                                                </select>
+                                                        </td>
+                                                        <td>Required</td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                        <td>Content-Sha1:</td>
+                                                        <td colspan="2"><input class="normal" id="contentSha1" type="text" name="contentSha1"/></td>
+                                                        <td>Optional</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Content-Type:</td>
+                                                        <td colspan="2"><input class="normal" id="contentType" type="text" name="contentType"/></td>
+                                                        <td>Optional</td>
+                                                </tr>
+                                                <tr> 
+                                                        <td>Date:</td>
+                                                        <td colspan="2"><input size="27" id="date" type="text" name="date"/>
+                                                        <input type="button" id="now" value="Now" onclick="generateUTCTime()"/></td>
+                                                        <td>Required,e.g: Fri, 13 Mar 2015 13:58:47 GMT </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>CanonicalizedDragonExHeaders:</td>
+                                                        <td colspan="2">
+                                                                <table>
+                                                                     <tbody id="userMetaRows">
+                                                                        <tr>
+                                                                        <td><input id="key1" type="text" name="meta[]" size='12'/>:<input  id="value1" type="text" name="value[]" size='11'/></td>
+                                                                        <td><input size="auto" type="button" value="+" onclick="addMetaRow()"/>
+                                                                        </td>            
+                                                                        </tr>
+                                                                     </tbody>
+                                                                </table>
+                                                        </td>
+                                                        <td>Optional, Meta key must start With 'dragonex-'</td>
+                                                </tr>
+                                                <tr>
+                                                        <td>CanonicalizedDragonExResource:</td>
+                                                        <td colspan="2"><input class="normal" id="resource" type='text' name='resource' value="/"/></td>
+                                                        <td>Required,e.g: /${queueName}/${Resource}/</td>
+                                                </tr>
+                                        </table>
+
+                                </td>
+                        </tr>      
+                        <tr>
+                                <td colspan="4" align="center">
+                                        <input  size="50" type='button' name="Sign" onClick="headSign()" value="Signature"/> 
+                                </td>
+                        </tr> 
+                        <tr>
+                               <td>
+                                    <table>
+                                        <tr>
+                                            <td>To Sign String:</td>
+                                            <td> <pre id="signString"></pre></td>
+                                        </tr>
+										<tr>
+                                            <td>----------------LINE-----------------</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Signature:</td>
+                                            <td> <pre id="signature"></pre></td>
+                                        </tr>
+                                    </table>
+                              </td>
+                        </tr>
+                </table>
+        </body>
+</html>
