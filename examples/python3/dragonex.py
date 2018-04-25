@@ -20,7 +20,7 @@ class DragonExV1(Base):
         data = {}
         return self.post(path, data)
 
-    def ensure_token_enabled(self, forever=False):
+    def ensure_token_enable(self, forever=False):
         http = self.token_status()
         if not http.ok:
             logging.debug('abnormal token status : token={}, code={}, msg={}'.format(self.token, http.code, http.msg))
@@ -37,7 +37,7 @@ class DragonExV1(Base):
 
         while forever:
             time.sleep(60)
-            self.ensure_token_enabled()
+            self.ensure_token_enable()
 
         return http
 
