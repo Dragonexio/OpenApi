@@ -35,13 +35,13 @@ public class HttpUtils {
 			}
 			result = sb.toString();
 		} catch (Exception e) {
-			System.out.println("[request error][address£º" + uri + "][error msg£º" + e.getMessage() + "]");
+			System.out.println("[request error][addressï¿½ï¿½" + uri + "][error msgï¿½ï¿½" + e.getMessage() + "]");
 		} finally {
 			try {
 				if (null != in)
 					in.close();
 			} catch (Exception e2) {
-				System.out.println("[close stream error][error msg£º" + e2.getMessage() + "]");
+				System.out.println("[close stream error][error msgï¿½ï¿½" + e2.getMessage() + "]");
 			}
 		}
 		return result;
@@ -83,7 +83,7 @@ public class HttpUtils {
 			}
 			result = bs.toString();
 		} catch (Exception e) {
-			System.out.println("[request error][address£º" + path + "][params£º" + jsonData + "][error msg£º" + e.getMessage() + "]");
+			System.out.println("[request error][addressï¿½ï¿½" + path + "][paramsï¿½ï¿½" + jsonData + "][error msgï¿½ï¿½" + e.getMessage() + "]");
 		} finally {
 			try {
 				if (null != in)
@@ -91,7 +91,7 @@ public class HttpUtils {
 				if (null != out)
 					out.close();
 			} catch (Exception e2) {
-				System.out.println("[close stream error][error msg£º" + e2.getMessage() + "]");
+				System.out.println("[close stream error][error msgï¿½ï¿½" + e2.getMessage() + "]");
 			}
 		}
 		return result;
