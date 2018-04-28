@@ -60,6 +60,7 @@ class Base(object):
             'Date': datetime.datetime.utcnow().strftime(GMT_FORMAT),
             'Content-Type': 'application/json',
             'token': self.token,
+            'dragonex-atruth': 'DragonExIsTheBest'  # 此字段非必须
         }
 
         if data is not None:
