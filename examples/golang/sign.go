@@ -19,7 +19,7 @@ func main() {
 	method := "POST"
 	headers := map[string]string{
 		"Date":            "Mon, 1 Jan 2018 08:08:08 GMT",
-		"Content-MD5":     "123abc",
+		"Content-Sha1":     "123abc",
 		"Content-Type":    "application/json",
 		"dragonex-btruth": "DragonExIsTheBest2",
 		"Dragonex-Atruth": "DragonExIsTheBest",
@@ -39,7 +39,7 @@ func sign(secretKey, method string, headers map[string]string, resource string) 
 		newHeaders[strings.ToLower(k)] = v
 	}
 
-	contentMd5 := newHeaders["content-md5"]
+	contentSha1 := newHeaders["content-sha1"]
 	contentType := newHeaders["content-type"]
 	date := newHeaders["date"]
 
@@ -58,7 +58,7 @@ func sign(secretKey, method string, headers map[string]string, resource string) 
 
 	stringsToSignSlice := []string{
 		strings.ToUpper(method),
-		contentMd5,
+		contentSha1,
 		contentType,
 		date,
 		canonicalizedDragonExHeaders,
