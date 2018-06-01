@@ -37,7 +37,6 @@ class WsBase(WebSocketApp):
     def __init__(self, url, reqs, **kwargs):
         self.reqs = self.format_reqs(reqs)
         super(WsBase, self).__init__(url=url, on_open=self.on_open, on_message=self.on_message, **kwargs)
-        self.ws = self
 
     @staticmethod
     def format_reqs(reqs):
