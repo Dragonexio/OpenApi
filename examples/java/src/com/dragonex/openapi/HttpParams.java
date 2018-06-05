@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 public class HttpParams {
 	
-	private static final SimpleDateFormat GMT_FORMAT = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+	private static final SimpleDateFormat GMT_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
 	
 	private static Map<String, String> sHttpHeaders = new HashMap<>();
 	
@@ -25,7 +25,7 @@ public class HttpParams {
 		sHttpHeaders.put("Charset", "UTF-8");
 		sHttpHeaders.put("Content-Type", "application/json");
 		
-		if  (HAS_CUSTOM_KEY) {// not indispensable
+		if  (HAS_CUSTOM_KEY) {  // not indispensable
 			sHttpHeaders.put("dragonex-atruth", "DragonExIsTheBest");
 			sHttpHeaders.put("dragonex-b", "best");
 		}

@@ -18,7 +18,7 @@ const (
 func main() {
 	method := "POST"
 	headers := map[string]string{
-		"Date":            "Mon, 1 Jan 2018 08:08:08 GMT",
+		"Date":            "Mon, 01 Jan 2018 08:08:08 GMT",
 		"Content-Sha1":     "123abc",
 		"Content-Type":    "application/json",
 		"dragonex-btruth": "DragonExIsTheBest2",
