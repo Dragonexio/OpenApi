@@ -2,6 +2,7 @@
 const http = require('https');
 const moment = require('moment');
 const crypto = require('crypto');
+const url = require('url');
 
 
 var GMT_FORMAT = "ddd, DD MMM YYYY HH:mm:ss";
@@ -21,8 +22,10 @@ class Base {
 	//
 	sendGET(path, params, headers, callback) {
 		let url = this.getURL(path); 
-		if (params !== null)
-			url += "?" + params;
+		if (params !== null) {
+			let ps = new url.URLSearchParams(params);
+			url += "?" + ps.toString();
+		}
 
 		if (headers == null)
 			headers = this.defaultHeaders('GET', path, null);
