@@ -137,3 +137,43 @@ class DragonExV1(Base):
         path = '/api/v1/deal/history/'
         data = {'symbol_id': symbol_id, 'direction': search_direction, 'start': start_time, 'count': count}
         return self.post(path, data)
+
+    def get_prepay_addr(self, coin_id):
+        if not check_is_all_digit(coin_id):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/coin/prepay/addr/'
+        data = {'coin_id': coin_id}
+        return self.post(path, data)
+
+    def list_prepay_history(self, coin_id, page_num=1, page_size=10):
+        if not check_is_all_digit(coin_id, page_num, page_size):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/coin/prepay/history/'
+        data = {'coin_id': coin_id, 'page_num': page_num,  'page_size': page_size}
+        return self.post(path, data)
+
+    def list_withdraw_addr(self, coin_id):
+        if not check_is_all_digit(coin_id):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/coin/withdraw/addr/list/'
+        data = {'coin_id': coin_id}
+        return self.post(path, data)
+
+    def add_new_withdraw(self, coin_id, addr_id, volume):
+        if not check_is_all_digit(coin_id, addr_id):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/coin/withdraw/new/'
+        data = {'coin_id': coin_id, 'addr_id': addr_id, 'volume': volume}
+        return self.post(path, data)
+
+    def list_withdraw_history(self, coin_id, page_num=1, page_size=10):
+        if not check_is_all_digit(coin_id, page_num, page_size):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/coin/withdraw/new/'
+        data = {'coin_id': coin_id, 'page_num': page_num, 'page_size': page_size}
+        return self.post(path, data)
