@@ -121,6 +121,14 @@ class DragonExV1(Base):
         data = {'symbol_id': symbol_id, 'order_id': order_id}
         return self.post(path, data)
 
+    def get_order_detail2(self, symbol_id, order_id):
+        if not check_is_all_digit(symbol_id, order_id):
+            return InvalidParamsHttpResponse
+
+        path = '/api/v1/order/detail2/'
+        data = {'symbol_id': symbol_id, 'order_id': order_id}
+        return self.post(path, data)
+
     def get_user_order_history(self, symbol_id, search_direction=2, start_time=0, count=10, status=0):
         if not check_is_all_digit(symbol_id, search_direction, start_time, count, status):
             return InvalidParamsHttpResponse
