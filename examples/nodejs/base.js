@@ -21,10 +21,10 @@ class Base {
 
 	//
 	sendGET(path, params, headers, callback) {
-		let url = this.getURL(path); 
+		let url = null;
 		if (params !== null) {
 			let ps = new url.URLSearchParams(params);
-			url += "?" + ps.toString();
+			url = path + "?" + ps.toString();
 		}
 
 		if (headers == null)
@@ -33,7 +33,7 @@ class Base {
 		let options = {  
 			hostname: this.host,
 			port: 443,
-			path: path,
+			path: url ? url : path,
 			method: 'GET',
 			headers: headers
 		};
