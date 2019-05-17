@@ -48,11 +48,11 @@ class WsBase(WebSocketApp):
 
         return [req for req in reqs if isinstance(req, WebSocketRequest)]
 
-    def on_open(self, ws):
+    def on_open(self):
         for req in self.reqs:
             ws.send(req.data)
 
-    def on_message(self, ws, message):
+    def on_message(self, message):
         logging.debug('receive message, message={}'.format(message))
 
 
