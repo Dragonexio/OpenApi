@@ -1,6 +1,6 @@
 # OpenApi
 
-1. [DragonEx](https://dragonex.im/): https://dragonex.im/
+1. [DragonEx](https://dragonex.io/): https://dragonex.io/
 
 1. [Docs](docs/)
     1. [English](docs/English)
